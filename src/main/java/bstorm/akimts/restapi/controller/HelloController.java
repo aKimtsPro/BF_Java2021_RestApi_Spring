@@ -1,5 +1,6 @@
 package bstorm.akimts.restapi.controller;
 
+import bstorm.akimts.restapi.exceptions.models.VoitureNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -17,8 +18,23 @@ public class HelloController {
     }
 
     @GetMapping
-    public void getHeader(@RequestHeader() HttpHeaders headers){
+    public void getHeader(@RequestHeader HttpHeaders headers){
         headers.keySet().forEach(log::warn);
+    }
+
+    @GetMapping("/ill_arg")
+    public void throwIllegalArgument(){
+        throw new IllegalArgumentException("lancé volontairement");
+    }
+
+    @GetMapping("/voit_not_found")
+    public void throwVoitureNotFound(){
+        throw new VoitureNotFoundException(-1);
+    }
+
+    @GetMapping("/not_handled")
+    public void throwUnhandled(){
+        throw new RuntimeException();
     }
 
 

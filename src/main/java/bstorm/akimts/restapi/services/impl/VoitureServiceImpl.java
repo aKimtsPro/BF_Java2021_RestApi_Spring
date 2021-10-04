@@ -1,5 +1,6 @@
 package bstorm.akimts.restapi.services.impl;
 
+import bstorm.akimts.restapi.exceptions.models.VoitureNotFoundException;
 import bstorm.akimts.restapi.mapper.VoitureMapper;
 import bstorm.akimts.restapi.models.dto.VoitureDTO;
 import bstorm.akimts.restapi.models.entity.Voiture;
@@ -51,14 +52,14 @@ public class VoitureServiceImpl implements VoitureService {
     public VoitureDTO getOne(Integer id) {
         return repository.findById(id)
                 .map(mapper::toDto)
-                .orElseThrow( () -> new IllegalArgumentException("voiture non trouvée."));
+                .orElseThrow( () -> new VoitureNotFoundException(id));
     }
 
     @Override
     public VoitureDTO delete(Integer id) {
 
         Voiture toDelete = repository.findById(id)
-                .orElseThrow( () -> new IllegalArgumentException("voiture non trouvée."));
+                .orElseThrow( () -> new VoitureNotFoundException(id));
 
         repository.delete( toDelete );
 
@@ -69,7 +70,7 @@ public class VoitureServiceImpl implements VoitureService {
     public VoitureDTO update(Integer id, VoitureForm form) {
 
         Voiture toUpdate = repository.findById(id)
-                .orElseThrow( () -> new IllegalArgumentException("voiture non trouvée."));
+                .orElseThrow( () -> new VoitureNotFoundException(id));
 
         toUpdate.setMarque(form.getMarque());
         toUpdate.setModele(form.getModele());
@@ -84,7 +85,7 @@ public class VoitureServiceImpl implements VoitureService {
     public VoitureDTO partialUpdate(Integer id, Map<String, Object> values) {
 
         Voiture v = repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("voiture non trouvé"));
+                .orElseThrow(() -> new VoitureNotFoundException(id));
 
         for (String s : values.keySet()) {
 

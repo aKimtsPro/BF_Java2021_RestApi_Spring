@@ -1,5 +1,8 @@
-package bstorm.akimts.restapi.controller;
+package bstorm.akimts.restapi.controller.handled;
 
+import bstorm.akimts.restapi.controller.HelloController;
+import bstorm.akimts.restapi.exceptions.models.ErrorDTO;
+import bstorm.akimts.restapi.exceptions.models.VoitureNotFoundException;
 import bstorm.akimts.restapi.models.dto.VoitureDTO;
 import bstorm.akimts.restapi.models.entity.Voiture;
 import bstorm.akimts.restapi.models.form.VoitureForm;
@@ -13,7 +16,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +57,7 @@ public class VoitureController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<VoitureDTO> getOneVoiture( @PathVariable Integer id) {
+    public ResponseEntity<VoitureDTO> getOneVoiture( @PathVariable Integer id ) {
 
         HttpHeaders headers = new HttpHeaders();
 
@@ -82,9 +90,9 @@ public class VoitureController {
     }
 
     @DeleteMapping(path = {"/{id}", "/delete/{id}"})
-    public ResponseEntity<VoitureDTO> deleteVoiture( @PathVariable int id ){
+    public ResponseEntity<VoitureDTO> deleteVoiture( @PathVariable("id") int identifiant ){
 
-        VoitureDTO dto = service.delete(id);
+        VoitureDTO dto = service.delete(identifiant);
         return ResponseEntity.ok(dto);
     }
 
@@ -104,5 +112,20 @@ public class VoitureController {
 
     }
 
+//    @ExceptionHandler({RuntimeException.class})
+//    public ResponseEntity<ErrorDTO> handleRuntime(Throwable ex){
+//        return ResponseEntity.badRequest()
+//                .body( new ErrorDTO(ex.getMessage()) );
+//    }
+//
+//    @ExceptionHandler(VoitureNotFoundException.class)
+//    public ResponseEntity<ErrorDTO> handleVoitureNotFound(
+//            VoitureNotFoundException ex
+//    ){
+//
+//        return ResponseEntity
+//                .status(HttpStatus.NOT_FOUND)
+//                .body(new ErrorDTO(ex.getMessage()));
+//    }
 
 }
