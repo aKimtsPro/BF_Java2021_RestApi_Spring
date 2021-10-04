@@ -26,12 +26,12 @@ public class ControllerExceptionHandler {
 //                .body( new ErrorDTO(ex.getMessage()) );
 //    }
 //
-    @ExceptionHandler(VoitureNotFoundException.class)
-    public ResponseEntity<ErrorDTO> handle(VoitureNotFoundException ex) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(new ErrorDTO(ex.getMessage()));
-    }
+//    @ExceptionHandler(VoitureNotFoundException.class)
+//    public ResponseEntity<ErrorDTO> handle(VoitureNotFoundException ex) {
+//        return ResponseEntity
+//                .status(HttpStatus.NOT_FOUND)
+//                .body(new ErrorDTO(ex.getMessage()));
+//    }
 
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<ErrorDTO> handle(Throwable ex, HttpServletRequest request/*pour recup info de requete*/){
