@@ -1,37 +1,31 @@
 package bstorm.akimts.restapi.config;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 @Configuration
 // @EnableWebSecurity
  @EnableGlobalMethodSecurity(
-         prePostEnabled = true
+         prePostEnabled = true,// @PreAuthorize et @PostAuthorize
+         jsr250Enabled = true, // @RoleAllowed
+         securedEnabled = true // @Secured
  )
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-     @Bean
-     public PasswordEncoder encoder(){
-         return new BCryptPasswordEncoder();
-     }
+    private final UserDetailsService service;
 
-     @Override
+    public SecurityConfig(UserDetailsService service) {
+        this.service = service;
+    }
+
+    @Override
      protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-         auth.inMemoryAuthentication()
-                 .withUser("admin")
-                 .password(encoder().encode("pass"))
-                 .authorities("ROLE_ADMIN", "ROLE_USER")
-                 .and()
-                 .withUser("user")
-                 .password(encoder().encode("pass"))
-                 .authorities("ROLE_USER");
+         auth.userDetailsService(service);
      }
 
      @Override
@@ -40,6 +34,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                  .httpBasic();
 
          http.authorizeRequests()
+                 .antMatchers(HttpMethod.POST, "/user/**").hasAuthority("ADMIN")
+                 .antMatchers(HttpMethod.PUT, "/user/**").hasAuthority("ADMIN")
+                 .antMatchers(HttpMethod.DELETE, "/user/**").hasAuthority("ADMIN")
+                 .antMatchers(HttpMethod.GET, "/user/**").hasAuthority("USER")
                  .anyRequest().permitAll();
 
          // h2

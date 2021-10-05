@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -24,8 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 @RestControllerAdvice
 public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
-//    @ExceptionHandler({RuntimeException.class})
-//    public ResponseEntity<ErrorDTO> handle(RuntimeException ex){
+//    @ExceptionHandler({IllegalArgumentException.class})
+//    public ResponseEntity<ErrorDTO> handle(IllegalArgumentException ex){
 //        return ResponseEntity.badRequest()
 //                .body( new ErrorDTO(ex.getMessage()) );
 //    }
@@ -61,14 +62,6 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
 
     // gestion générale des 404
-//    @ExceptionHandler(NoHandlerFoundException.class)
-//    public ResponseEntity<ErrorDTO> handle(NoHandlerFoundException ex){
-//
-//        return ResponseEntity
-//                .status(HttpStatus.NOT_FOUND)
-//                .body(new ErrorDTO(ex.getMessage()));
-//
-//    }
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         return ResponseEntity
@@ -76,4 +69,11 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(new ErrorDTO(ex.getMessage()));
     }
 
+    // Gestion erreur de validation
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ex.getMessage());
+    }
 }
