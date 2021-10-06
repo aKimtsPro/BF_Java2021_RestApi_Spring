@@ -9,6 +9,7 @@ import bstorm.akimts.restapi.repository.VoitureRepository;
 import bstorm.akimts.restapi.services.VoitureService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class VoitureServiceImpl implements VoitureService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('ADMIN')")
     public void insert(VoitureForm form) {
 
         Voiture entity = mapper.fromFormToEntity(form);
@@ -35,6 +37,7 @@ public class VoitureServiceImpl implements VoitureService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('ADMIN')")
     public VoitureDTO insertWithReturn(VoitureForm form) {
         Voiture entity = mapper.fromFormToEntity(form);
         VoitureDTO dto = mapper.toDto( repository.save(entity) );
@@ -42,6 +45,7 @@ public class VoitureServiceImpl implements VoitureService {
     }
 
     @Override
+    @PreAuthorize("isAuthenticated()")
     public List<VoitureDTO> getAll() {
         return repository.findAll().stream()
                 .map(mapper::toDto)
@@ -49,6 +53,7 @@ public class VoitureServiceImpl implements VoitureService {
     }
 
     @Override
+    @PreAuthorize("isAuthenticated()")
     public VoitureDTO getOne(Integer id) {
         return repository.findById(id)
                 .map(mapper::toDto)
@@ -56,6 +61,7 @@ public class VoitureServiceImpl implements VoitureService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('ADMIN')")
     public VoitureDTO delete(Integer id) {
 
         Voiture toDelete = repository.findById(id)
@@ -67,6 +73,7 @@ public class VoitureServiceImpl implements VoitureService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('ADMIN')")
     public VoitureDTO update(Integer id, VoitureForm form) {
 
         Voiture toUpdate = repository.findById(id)
@@ -82,6 +89,7 @@ public class VoitureServiceImpl implements VoitureService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('ADMIN')")
     public VoitureDTO partialUpdate(Integer id, Map<String, Object> values) {
 
         Voiture v = repository.findById(id)
@@ -120,6 +128,7 @@ public class VoitureServiceImpl implements VoitureService {
     }
 
     @Override
+    @PreAuthorize("isAuthenticated()")
     public Page<VoitureDTO> getAllWithPagination(int page, int size) {
 
         Page<Voiture> result = this.repository.findAll( PageRequest.of(page, size) );

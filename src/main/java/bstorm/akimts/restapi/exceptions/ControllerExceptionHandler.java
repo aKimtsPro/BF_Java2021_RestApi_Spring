@@ -3,12 +3,14 @@ package bstorm.akimts.restapi.exceptions;
 
 import bstorm.akimts.restapi.controller.handled.VoitureController;
 import bstorm.akimts.restapi.exceptions.models.ErrorDTO;
+import bstorm.akimts.restapi.exceptions.models.UsernamePasswordInvalidException;
 import bstorm.akimts.restapi.exceptions.models.VoitureNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -39,7 +41,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 //    }
 
     @ExceptionHandler(Throwable.class)
-    public ResponseEntity<ErrorDTO> handle(Throwable ex, HttpServletRequest request/*pour recup info de requete*/){
+    public ResponseEntity<ErrorDTO> handle(Throwable ex, HttpServletRequest request){
 
         if(ex.getMessage() != null){
 
@@ -51,6 +53,16 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
             if( ex instanceof VoitureNotFoundException ){
                 return ResponseEntity
                         .status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorDTO(ex.getMessage()));
+            }
+            if( ex instanceof UsernamePasswordInvalidException){
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(new ErrorDTO(ex.getMessage()));
+            }
+            if( ex instanceof AccessDeniedException){
+                return ResponseEntity
+                        .status(HttpStatus.FORBIDDEN)
                         .body(new ErrorDTO(ex.getMessage()));
             }
         }

@@ -2,6 +2,7 @@ package bstorm.akimts.restapi.controller;
 
 import static bstorm.akimts.restapi.config.SecurityConstants.*;
 import bstorm.akimts.restapi.models.dto.UserDTO;
+import bstorm.akimts.restapi.models.form.UserLoginForm;
 import bstorm.akimts.restapi.models.form.UserRegisterForm;
 import bstorm.akimts.restapi.services.SessionService;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +19,9 @@ public class SessionController {
         this.service = service;
     }
 
-    public ResponseEntity<UserDTO> login(){
-        return null;
+    @PostMapping(LOGIN_URL)
+    public ResponseEntity<UserDTO> login( @RequestBody UserLoginForm form ){
+        return ResponseEntity.ok( service.login(form) );
     }
 
     @PostMapping(REGISTER_URL)
